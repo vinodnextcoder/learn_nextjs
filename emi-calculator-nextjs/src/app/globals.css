@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.result {
+    height: 60px;
+    background-color: #bbb;
+    width: 100%;
+  }
+  
+  .result p {
+    font-size: 40px;
+    margin: 5px;
+  
+  }
