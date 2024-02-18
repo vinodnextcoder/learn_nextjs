@@ -5,20 +5,18 @@ import largestBroker from "./images/largest-broker.svg";
 import presslogo from "./images/press-logos.png";
 import ecosystem from "./images/ecosystem.png"
 import { MoveRight } from "lucide-react";
+import EmiCalculator from "./calculator/page";
 // const googlefont = Open_Sans
 export default function Home() {
   return (
     <>
       <Navbar></Navbar>
+      <EmiCalculator/>
       <div className="w-full my-14 -z-10  relative text-gray-600">
+     
         <div className="w-[90%] mx-auto relative md:w-[1000px]">
-          <Image
-            src={hero}
-            width={2362}
-            height={994}
-            alt="Landing Image Zerodha"
-            className=""
-          ></Image>
+ 
+         
           <h2 className="text-center text-5xl text-gray-700 my-12">
             Invest in everything
           </h2>

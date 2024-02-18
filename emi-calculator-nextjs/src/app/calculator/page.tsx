@@ -1,161 +1,81 @@
 "use client"
-// Filename: index.js 
-// @ts-nocheck
-import { useState, useRef, useEffect } from "react"; 
+import React, { useState } from "react";
 
+const EmiCalculator: React.FC = () => {
+  const [principal, setPrincipal] = useState<number | string>(100000);
+  const [interestRate, setInterestRate] = useState<number | string>(10);
+  const [loanTenure, setLoanTenure] = useState<number | string>(12);
+  const [emi, setEmi] = useState<string | null>(null);
 
-export default function Home() { 
-	const [loanAmount, setLoanAmount] = useState(100000); 
-	const [interestRate, setInterestRate] = useState(9); 
-	
-	// Default value of 12 months 
-	const [loanTenure, setLoanTenure] = useState(12); 
-	const [loanEMI, setLoanEMI] = useState(0); 
-	const [totalInterest, setTotalInterest] = useState(0); 
-	const [totalAmount, setTotalAmount] = useState(0); 
+  const calculateEmi = () => {
+    if (!principal || !interestRate || !loanTenure) {
+      // Handle case where any value is empty
+      setEmi(null);
+      return;
+    }
 
-	const inputRefs :any = { 
-		loanAmount: useRef(), 
-		interestRate: useRef(), 
-		loanTenure: useRef(), 
-	}; 
+    const principalNum = parseFloat(principal as string);
+    const interestRateNum = parseFloat(interestRate as string);
+    const loanTenureNum = parseInt(loanTenure as string);
 
-	useEffect(() => { 
-		calculateEMI(); 
-	}, []); 
+    if (isNaN(principalNum) || isNaN(interestRateNum) || isNaN(loanTenureNum)) {
+      // Handle case where values are not valid numbers
+      setEmi(null);
+      return;
+    }
 
-	const handleInputChange = (e:any) => { 
-		const { name, value } = e.target; 
-		if ( 
-			name === "loanAmount" || 
-			name === "loanTenure" || 
-			name === "interestRate"
-		) { 
-			if (name === "loanTenure") { 
-				setLoanTenure(parseInt(value) || 0); 
-			} else if (name === "loanAmount") { 
-				setLoanAmount(parseFloat(value) || 0); 
-			} else if (name === "interestRate") { 
-				setInterestRate(parseFloat(value) || 0); 
-			} 
-		} 
-	}; 
+    const emiValue =
+      principalNum *
+      (interestRateNum / 12 / 100) *
+      (Math.pow(1 + interestRateNum / 12 / 100, loanTenureNum) /
+        (Math.pow(1 + interestRateNum / 12 / 100, loanTenureNum) - 1));
 
-	const calculateEMI = () => { 
-		const emi = 
-			loanAmount * 
-			(interestRate / 12 / 100) * 
-			(Math.pow( 
-				1 + interestRate / 12 / 100, 
-				loanTenure 
-			) / 
-				(Math.pow( 
-					1 + interestRate / 12 / 100, 
-					loanTenure 
-				) - 
-					1)); 
+    setEmi(emiValue.toFixed(2));
+  };
 
-		setLoanEMI(emi); 
-		setTotalAmount(Math.round(loanTenure * emi)); 
-		setTotalInterest( 
-			Math.round(loanTenure * emi) - loanAmount 
-		); 
+  return (
+    <div className="max-w-md mx-auto mt-8 p-4 bg-white rounded-md shadow-md">
+      <h1 className="text-2xl font-bold mb-4">EMI Calculator</h1>
 
-		updateData(); 
-	}; 
+      <label className="block mb-2 text-sm text-gray-600">Principal Amount</label>
+      <input
+        type="text"
+        value={principal}
+        onChange={(e) => setPrincipal(e.target.value)}
+        placeholder="Enter principal amount"
+        className="w-full p-2 mb-4 border rounded-md"
+      />
 
-	const updateData = () => { 
-		Object.keys(inputRefs).forEach((key) => { 
-			inputRefs[key].current.value = parseFloat( 
-				inputRefs[key].current.value || 0 
-			).toFixed(2); 
-		}); 
+      <label className="block mb-2 text-sm text-gray-600">Interest Rate</label>
+      <input
+        type="text"
+        value={interestRate}
+        onChange={(e) => setInterestRate(e.target.value)}
+        placeholder="Enter interest rate"
+        className="w-full p-2 mb-4 border rounded-md"
+      />
 
-		inputRefs.loanAmount.current.value = 
-			loanAmount.toFixed(2); 
-		inputRefs.interestRate.current.value = 
-			interestRate.toFixed(2); 
-		inputRefs.loanTenure.current.value = loanTenure; 
-	}; 
+      <label className="block mb-2 text-sm text-gray-600">Loan Tenure (in months)</label>
+      <input
+        type="text"
+        value={loanTenure}
+        onChange={(e) => setLoanTenure(e.target.value)}
+        placeholder="Enter loan tenure"
+        className="w-full p-2 mb-4 border rounded-md"
+      />
 
-	const handleCalculate = () => { 
-		calculateEMI(); 
-	}; 
+      <button
+        onClick={calculateEmi}
+        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-700"
+      >
+        Calculate EMI
+      </button>
 
-	return ( 
-		<div className="loanCalculator"> 
-			<div className="top"> 
-				<h1 className="heading"> 
-					Geeksforgeeks 
-				</h1> 
-				<h3>Loan Calculator</h3> 
-				<form action="#"> 
-					{Object.entries(inputRefs).map( 
-						([key, ref]) => ( 
-							<div 
-								key={key} 
-								className="subContainer"
-							> 
-								<div 
-									className="title" 
-								> 
-									{key.replace( 
-										/^\w/, 
-										(c) => 
-											c.toUpperCase() 
-									)} 
-								</div> 
-								<input 
-									type="text"
-									name={key} 
-									defaultValue={ 
-										key === 
-											"interestRate"
-											? interestRate 
-											: key === 
-												"loanTenure"
-												? loanTenure 
-												: loanAmount 
-									} 
-									className={styles[key]} 
-									ref={ref} 
-									onChange={ 
-										handleInputChange 
-									} 
-								/> 
-							</div> 
-						) 
-					)} 
-				</form> 
-				<button 
-					className="btn" 
-					onClick={handleCalculate} 
-				> 
-					Calculate 
-				</button> 
-			</div> 
-			<div className="finalResult"> 
-				<div className="styles.left"> 
-					<div className="loanEMI"> 
-						<h3>Loan EMI</h3> 
-						<div className="value"> 
-							{Math.round(loanEMI)} 
-						</div> 
-					</div> 
-					<div className="totalInterest"> 
-						<h3>Total Interest Payable</h3> 
-						<div className="value"> 
-							{totalInterest} 
-						</div> 
-					</div> 
-					<div className="totalAmount"> 
-						<h3>Total Amount</h3> 
-						<div className="value"> 
-							{totalAmount} 
-						</div> 
-					</div> 
-				</div> 
-			</div> 
-		</div> 
-	); 
-}
+      {emi !== null && (
+        <p className="mt-4">EMI: {isNaN(parseFloat(emi)) ? "Invalid input" : emi}</p>
+      )}
+    </div>
+  );
+};
+
+export default EmiCalculator;
