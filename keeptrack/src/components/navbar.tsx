@@ -12,7 +12,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <h1 className="navbar-logo">
-        TimeCard <i className="fab fa-react"></i>
+        React Learn <i className="fab fa-react"></i>
       </h1>
       <div className="menu-icon" onClick={handleClick}>
         <i className={active ? "fas fa-times" : "fas fa-bars"}></i>
